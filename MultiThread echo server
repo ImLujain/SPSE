@@ -1,0 +1,45 @@
+#!/usr/bin/python 
+
+import socket
+import threading
+
+
+host = ''
+port = 8888
+
+
+def ser(ip,port):
+	
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	print 'Socket created'
+	s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1) 
+	try:
+	    s.bind((host, port))
+	except socket.error as msg:
+	    print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+	    sys.exit()
+     
+	print 'Socket bind complete'
+	#Start listening on socket
+	s.listen(10)
+	print 'Socket now listening'
+	return s
+
+def han(client,address):
+	print 'waiting for client'
+	print("Received connection from: {}:{}".format(*address))
+
+	while True:
+		data = client.recv(2048)
+		print data
+		client.send(data)
+	
+ 
+
+ 
+s= ser('0.0.0.0',8080)
+#now keep talking with the client
+while 1:
+    #wait to accept a connection - blocking call
+    conn, addr = s.accept()
+    threading.Thread(target=han, args=(conn,addr)).start()
