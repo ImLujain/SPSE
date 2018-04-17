@@ -1,5 +1,14 @@
 #!/usr/bin/python 
 
+'''
+1. Create socket with socket.socket function
+2. Bind socket to address+port with socket.bind function
+3. Put the socket in listening mode with socket.listen function
+3. Accept connection with socket.accept function
+
+
+'''
+
 import socket
 import threading
 
