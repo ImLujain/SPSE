@@ -1,0 +1,33 @@
+#!/usr/bin/python
+
+'''
+web application server
+ - Process Request
+ - Execute CGI scriptss 
+'''
+
+import SocketServer
+import SimpleHTTPServer
+'''
+SimpleHTTPServer.SimpleHTTPRequestHandler < the default handler for simple http server type, the moment we start the server it act as a file server listing all files in the current directory 
+we can add anothrt handler to do other stuff
+
+'''
+
+class HttpRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+	def do_GET(self) :
+		if self.path == '/admin':
+			self.wfile.write('THis page is only for admin')
+			self.wfile.write(self.headers)
+
+		else :
+			SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+
+httpServer = SocketServer.TCPServer(('',1000), SimpleHTTPServer.SimpleHTTPRequestHandler)
+
+httpServer.serve_forever()
+
+
+
+
+
