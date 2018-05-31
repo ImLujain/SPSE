@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+#5.5Find
+
+import sys
+sys.path.append('C:/Program Files (x86)/Immunity Inc/Immunity Debugger')
+sys.path.append('C:/Program Files (x86)/Immunity Inc/Immunity Debugger/Libs')
+
+import immlib
+
+#description
+DESC = " Simple script"
+
+def main(args):
+
+
+	imm = immlib.Debugger()
+        #assemble returns hex instruction
+	assembledInstruction = imm.assemble(' '.join(args)) ####to make it one instruction regardless of the spaces e.g JMP ESP args[0]=JMP args[1]=ESP
+	
+	if not assembledInstruction:
+		return "[-] No Instruction Given :( "
+	#search will reaturn list of addresses both within module as well as outside of the module 
+	addressList= imm.search(assembledInstruction)
+
+	td = imm.createTable("Instruction Locations", ['Module', 'Base Address', 'Instruction Address', 'Instruction'])
+	#find module for each address
+
+	for address in addressList:
+		module = imm.findModule(address)
+		#will return boolean
+		if imm.findModuleByName("RPCRT4"):
+                        #to print its proprities 
+                        me = imm.getModule("RCPRT4")
+                        # we use get to get object proprities
+                        imm.log(me.getName())
+		#if the address doesn't exist in any module
+		if not module:
+			imm.log("Address: 0x%08X not in any module" %address)
+			continue 
+
+		#for when we have more than one argument.
+		instruction = ''
+		numArgs = len(' '.join(args).split('\n'))###find the number of instruction then split them 
+		for count in range(0, numArgs) :
+			instruction += imm.disasmForward(address, nlines=count).getDisasm() + ' '
+
+		td.add(0, [ module[0],
+			str('0x%08x'%module[1]),
+			str('0x%08x'%address),
+			instruction
+			])
+
+	return "Success"
