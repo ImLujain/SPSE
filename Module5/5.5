@@ -27,7 +27,7 @@ def main(args):
 	#find module for each address
 
 	for address in addressList:
-		module = imm.findModule(address)
+		module = imm.findModule(address)# will return the dll of the instruction provided by search and the base address
 		#will return boolean
 		if imm.findModuleByName("RPCRT4"):
                         #to print its proprities 
